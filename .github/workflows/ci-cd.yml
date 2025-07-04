@@ -15,7 +15,7 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    # Debug secret presence
+    # 🔍 Debug Docker Secrets
     - name: 🔍 Debug Docker Secrets
       run: |
         echo "DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}"
@@ -26,18 +26,14 @@ jobs:
           echo "✅ DOCKER_PASSWORD is present"
         fi
 
-    # ✅ THIS STEP IS CRUCIAL
+    # ✅ Docker Login
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Build sender image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sender:latest ./sender
+    # 🛠️ Build Docker Image (just one image needed)
+    - name: Build portfolio image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/portfolio:latest .
 
-    - name: Build receiver image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/receiver:latest ./receiver
-
-    - name: Push sender image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/sender:latest
-
-    - name: Push receiver image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/receiver:latest
+    # 📤 Push Image to Docker Hub
+    - name: Push portfolio image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio:latest
